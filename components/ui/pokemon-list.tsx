@@ -1,29 +1,42 @@
 import React from "react";
 import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { pokemonData } from "../../app/constants/pokemon"; // adjust the path if needed
+import { pokemonData } from "../../app/constants/pokemon";
+import { useRouter } from "expo-router";
 
-export const PokemonList: React.FC = () => {
+export type Pokemon = {
+  id: number;
+  name: string;
+  type: string;
+};
+const router = useRouter();
+
+type PokemonListProps = {
+  data?: Pokemon[]; // optional, defaults to full list
+};
+
+export const PokemonList: React.FC<PokemonListProps> = ({ data = pokemonData }) => {
   return (
     <FlatList
-      data={pokemonData}
+      data={data}
       keyExtractor={(item) => item.id.toString()}
       numColumns={2}
       columnWrapperStyle={styles.columnWrapper}
       contentContainerStyle={styles.cardsContainer}
       renderItem={({ item }) => (
         <Pressable
-          style={styles.card}
-          onPress={() => Alert.alert(`${item.name}`, `You pressed ${item.name}!`)}
-        >
+            style={styles.card}
+            onPress={() => router.push(`/pokemon/${item.id}`)}
+            >
           <View style={styles.cardBackground}>
             <View style={styles.idBadge}>
               <Text style={styles.idText}>{item.id.toString().padStart(3, "0")}</Text>
             </View>
             <Image
-              source={require("../../assets/images/icon.png")} // same as original
-              style={styles.pokemonImage}
-            />
+                source={{ uri: "https://i.pinimg.com/736x/bb/8d/4f/bb8d4f05506d83b9f825dc1f47e835ac.jpg" }}
+                style={styles.pokemonImage}
+                />
+
           </View>
           <Text style={styles.pokemonName}>{item.name}</Text>
         </Pressable>
