@@ -1,8 +1,8 @@
-import React from "react";
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { pokemonData } from "../../app/constants/pokemon";
 import { useRouter } from "expo-router";
+import React from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { pokemonData } from "../../app/constants/pokemon";
 
 export type Pokemon = {
   id: number;
