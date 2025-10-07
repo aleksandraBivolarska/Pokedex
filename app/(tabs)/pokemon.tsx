@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {Text, View, StyleSheet } from "react-native";
-import { PokemonList } from "../../components/ui/pokemon-list";
+import { Text, View, StyleSheet } from "react-native";
+import { PokemonList } from "@/components/ui/pokemon-list";
 
 export default function PokemonScreen() {
   return (

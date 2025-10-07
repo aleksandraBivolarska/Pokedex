@@ -57,7 +57,6 @@ export default function PokemonDetailScreen() {
         <Text style={styles.typeText}>{pokemon.type}</Text>
       </View>
 
-      {/* 4️⃣ Navigation back */}
       <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>Go Back</Text>
       </Pressable>

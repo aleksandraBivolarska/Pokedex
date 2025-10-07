@@ -1,42 +1,57 @@
+import React from "react";
+import { View, Text, ActivityIndicator, FlatList, Pressable, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import React from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { pokemonData } from "../../app/constants/pokemon";
+import { usePokemonList } from "@/hooks/use-pokemon";
 
-export type Pokemon = {
-  id: number;
-  name: string;
-  type: string;
-};
-const router = useRouter();
+export const PokemonList: React.FC = () => {
+  const { data: pokemonList, isLoading, error } = usePokemonList(0, 150);
+  const router = useRouter();
 
-type PokemonListProps = {
-  data?: Pokemon[]; // optional, defaults to full list
-};
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" />
+        <Text>Loading Pokémon...</Text>
+      </View>
+    );
+  }
 
-export const PokemonList: React.FC<PokemonListProps> = ({ data = pokemonData }) => {
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text>Error loading Pokémon: {error.message}</Text>
+      </View>
+    );
+  }
+
   return (
     <FlatList
-      data={data}
-      keyExtractor={(item) => item.id.toString()}
+      data={pokemonList?.results ?? []}
+      keyExtractor={(item) => item.name}
       numColumns={2}
       columnWrapperStyle={styles.columnWrapper}
       contentContainerStyle={styles.cardsContainer}
-      renderItem={({ item }) => (
+      showsVerticalScrollIndicator={false}
+      renderItem={({ item, index }) => (
         <Pressable
-            style={styles.card}
-            onPress={() => router.push(`/pokemon/${item.id}`)}
-            >
+          style={styles.card}
+          onPress={() => router.push(`/pokemon/${index + 1}`)}
+        >
           <View style={styles.cardBackground}>
             <View style={styles.idBadge}>
-              <Text style={styles.idText}>{item.id.toString().padStart(3, "0")}</Text>
+              <Text style={styles.idText}>
+                {(index + 1).toString().padStart(3, "0")}
+              </Text>
             </View>
             <Image
-                source={{ uri: "https://i.pinimg.com/736x/bb/8d/4f/bb8d4f05506d83b9f825dc1f47e835ac.jpg" }}
-                style={styles.pokemonImage}
-                />
-
+              source={{
+                uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
+                  index + 1
+                }.png`,
+              }}
+              style={styles.pokemonImage}
+            />
           </View>
           <Text style={styles.pokemonName}>{item.name}</Text>
         </Pressable>
@@ -46,6 +61,11 @@ export const PokemonList: React.FC<PokemonListProps> = ({ data = pokemonData }) 
 };
 
 const styles = StyleSheet.create({
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   cardsContainer: {
     paddingBottom: 20,
   },
@@ -55,8 +75,7 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    marginLeft: 8,
-    marginRight: 8,
+    marginHorizontal: 8,
     borderRadius: 16,
     backgroundColor: "#fff",
     shadowColor: "#000",
@@ -82,6 +101,7 @@ const styles = StyleSheet.create({
     padding: 14,
     width: "100%",
     textAlign: "left",
+    textTransform: "capitalize",
   },
   pokemonImage: {
     width: "80%",
