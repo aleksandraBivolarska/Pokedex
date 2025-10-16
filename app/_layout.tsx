@@ -5,12 +5,13 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { databaseService } from './services/database';
+import { useEffect } from 'react';
+
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
-
-
 
 
 // Create a QueryClient instance with default options
@@ -23,20 +24,21 @@ const queryClient = new QueryClient({
   },
 });
 
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  useEffect(() => {
+    // Initialize database when app starts
+    databaseService.initDatabase().catch(console.error);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      
-       
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <SafeAreaProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+          <Stack.Screen name="pokemon/[name]" options={{ title: "Pokemon Details" }} />
         </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-      
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 }

@@ -3,10 +3,15 @@ import { View, Text, ActivityIndicator, FlatList, Pressable, StyleSheet } from "
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { usePokemonList } from "@/hooks/use-pokemon";
+import  PokemonCard  from "../ui/pokemon-card";
+import Favorite from "./favorite";
 
 export const PokemonList: React.FC = () => {
   const { data: pokemonList, isLoading, error } = usePokemonList(0, 150);
   const router = useRouter();
+  const handlePokemonPress = (pokemonName: string) => {
+  router.push(`/pokemon/${pokemonName}`);
+};
 
   if (isLoading) {
     return (
@@ -26,38 +31,28 @@ export const PokemonList: React.FC = () => {
   }
 
   return (
-    <FlatList
-      data={pokemonList?.results ?? []}
-      keyExtractor={(item) => item.name}
-      numColumns={2}
-      columnWrapperStyle={styles.columnWrapper}
-      contentContainerStyle={styles.cardsContainer}
-      showsVerticalScrollIndicator={false}
-      renderItem={({ item, index }) => (
-        <Pressable
-          style={styles.card}
-          onPress={() => router.push(`/pokemon/${index + 1}`)}
-        >
-          <View style={styles.cardBackground}>
-            <View style={styles.idBadge}>
-              <Text style={styles.idText}>
-                {(index + 1).toString().padStart(3, "0")}
-              </Text>
-            </View>
-            <Image
-              source={{
-                uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
-                  index + 1
-                }.png`,
-              }}
-              style={styles.pokemonImage}
-            />
-          </View>
-          <Text style={styles.pokemonName}>{item.name}</Text>
-        </Pressable>
-      )}
-    />
-  );
+  <FlatList
+    data={pokemonList?.results ?? []}
+    keyExtractor={(item, index) => (index + 1).toString()}
+    numColumns={2}
+    columnWrapperStyle={styles.columnWrapper}
+    contentContainerStyle={styles.cardsContainer}
+    showsVerticalScrollIndicator={false}
+    renderItem={({ item, index }) => (
+      <PokemonCard
+        pokemon={{
+          id: (index + 1).toString(),
+          name: item.name,
+          imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
+            index + 1
+          }.png`,
+        }}
+        onPress={() => handlePokemonPress(item.name)}
+      />
+    )}
+  />
+);
+
 };
 
 const styles = StyleSheet.create({

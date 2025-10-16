@@ -8,7 +8,7 @@ export default function PokemonScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <Text style={styles.title}>All Pokémon</Text>
-        <PokemonList />
+        <PokemonList/>
       </View>
     </SafeAreaProvider>
   );
