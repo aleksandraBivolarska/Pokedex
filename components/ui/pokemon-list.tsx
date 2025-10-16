@@ -1,17 +1,35 @@
-import React from "react";
-import { View, Text, ActivityIndicator, FlatList, Pressable, StyleSheet } from "react-native";
-import { Image } from "expo-image";
+import React, { useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
-import { usePokemonList } from "@/hooks/use-pokemon";
-import  PokemonCard  from "../ui/pokemon-card";
-import Favorite from "./favorite";
+import PokemonCard from "./pokemon-card";
+import { FavoritePokemon } from "../../app/services/database";
 
-export const PokemonList: React.FC = () => {
-  const { data: pokemonList, isLoading, error } = usePokemonList(0, 150);
+interface PokemonListProps {
+  data?: any[];              // Pokémon data (either from API or DB)
+  isLoading?: boolean;
+  error?: Error | null;
+  type?: "all" | "favorites"; // Context of list
+}
+
+export const PokemonList: React.FC<PokemonListProps> = ({
+  data = [],
+  isLoading = false,
+  error = null,
+  type = "all",
+}) => {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
   const handlePokemonPress = (pokemonName: string) => {
-  router.push(`/pokemon/${pokemonName}`);
-};
+    router.push(`/pokemon/${pokemonName}`);
+  };
+
+  const filteredList = useMemo(() => {
+    if (!data) return [];
+    return data.filter((pokemon: any) =>
+      pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
 
   if (isLoading) {
     return (
@@ -30,29 +48,66 @@ export const PokemonList: React.FC = () => {
     );
   }
 
-  return (
-  <FlatList
-    data={pokemonList?.results ?? []}
-    keyExtractor={(item, index) => (index + 1).toString()}
-    numColumns={2}
-    columnWrapperStyle={styles.columnWrapper}
-    contentContainerStyle={styles.cardsContainer}
-    showsVerticalScrollIndicator={false}
-    renderItem={({ item, index }) => (
-      <PokemonCard
-        pokemon={{
-          id: (index + 1).toString(),
-          name: item.name,
-          imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
-            index + 1
-          }.png`,
-        }}
-        onPress={() => handlePokemonPress(item.name)}
-      />
-    )}
-  />
-);
+  // 🧠 Empty state
+  if (filteredList.length === 0) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.emptyText}>
+          {type === "favorites"
+            ? "No favorites yet. Tap a heart to add one!"
+            : "No Pokémon found."}
+        </Text>
+      </View>
+    );
+  }
 
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder={
+            type === "favorites" ? "Search favorites..." : "Search Pokémon..."
+          }
+          placeholderTextColor="#999"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+
+      <FlatList
+        data={filteredList}
+        keyExtractor={(item) => item.name}
+        numColumns={2}
+        columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={styles.cardsContainer}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => {
+          // Handle API vs Favorites source
+          const id =
+            type === "favorites"
+              ? item.id
+              : parseInt(item.url.match(/\/pokemon\/(\d+)\//)?.[1] || "0", 10);
+
+          const imageUrl =
+            item.imageUrl ||
+            item.image_url ||
+            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+
+          return (
+            <PokemonCard
+              pokemon={{
+                id,
+                name: item.name,
+                imageUrl,
+              }}
+              onPress={() => handlePokemonPress(item.name)}
+            />
+          );
+        }}
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -61,6 +116,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#555",
+  },
   cardsContainer: {
     paddingBottom: 20,
   },
@@ -68,55 +128,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 12,
   },
-  card: {
-    flex: 1,
-    marginHorizontal: 8,
-    borderRadius: 16,
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#f0f8ff",
+  },
+  searchInput: {
     backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    paddingBottom: 16,
-    alignItems: "center",
-  },
-  cardBackground: {
-    width: "100%",
-    backgroundColor: "#F6F6FF",
-    alignItems: "center",
-    paddingVertical: 16,
-    marginBottom: 8,
-    position: "relative",
-  },
-  pokemonName: {
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     fontSize: 16,
-    fontWeight: "700",
     color: "#0E0940",
-    padding: 14,
-    width: "100%",
-    textAlign: "left",
-    textTransform: "capitalize",
-  },
-  pokemonImage: {
-    width: "80%",
-    aspectRatio: 1,
-    marginBottom: 8,
-  },
-  idBadge: {
-    backgroundColor: "#5631E8",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    position: "absolute",
-    top: 8,
-    left: 8,
-    zIndex: 1,
-  },
-  idText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 12,
-    fontFamily: "Rubik",
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
 });
