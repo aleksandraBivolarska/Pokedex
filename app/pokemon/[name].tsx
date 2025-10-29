@@ -3,7 +3,8 @@ import { PokemonImage } from '@/components/ui/pokemon-image';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import PokemonTabs from '@/components/ui/pokemon-tabs';
+import { typeColors } from '../constants/pokemonColors';
 export default function PokemonDetailScreen() {
   const { name } = useLocalSearchParams();
   const { data: pokemon, isLoading, error } = usePokemonByName(name as string);
@@ -38,51 +39,31 @@ export default function PokemonDetailScreen() {
           </Text>
           <Text style={styles.pokemonId}>{pokemon.id.toString().padStart(3, '0')}</Text>
         </View>
+
+
+// ...
+
+<View style={styles.typesContainer}>
+  {pokemon.types.map((typeInfo, index) => {
+    const typeName = typeInfo.type.name;
+    const color = typeColors[typeName.toLowerCase()] || '#777';
+
+    return (
+      <View key={index} style={styles.typeBadge}>
+        <View style={[styles.typeCircle, { backgroundColor: color }]} />
+        <Text style={styles.typeText}>
+          {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
+        </Text>
+      </View>
+    );
+  })}
+</View>
         
-        {/* Pokemon Image will go here */}
         <View style={styles.imageContainer}>
           <PokemonImage id={pokemon.id} size={200} />
         </View>
         
-        <View style={styles.detailsContainer}>
-          <Text style={styles.sectionTitle}>Types</Text>
-          <View style={styles.typesContainer}>
-            {pokemon.types.map((typeInfo, index) => (
-              <View key={index} style={styles.typeBadge}>
-                <Text style={styles.typeText}>
-                  {typeInfo.type.name.charAt(0).toUpperCase() + 
-                   typeInfo.type.name.slice(1)}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-        
-        <View style={styles.detailsContainer}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <Text>ID: {pokemon.id}</Text>
-          <Text>Base: {pokemon.base_experience} XP</Text>
-          <Text>Height: {pokemon.height}</Text>
-          <Text>Weight: {pokemon.weight}</Text>
-
-          <Text style={styles.sectionTitle}>Types</Text>
-          <View style={styles.typesContainer}>
-            {pokemon.types.map((typeInfo, index) => (
-              <View key={index}>
-                <Text>
-                  {typeInfo.type.name.charAt(0).toUpperCase() + typeInfo.type.name.slice(1)}
-                </Text>
-              </View>
-            ))}            
-          </View>
-          <Text style={styles.sectionTitle}>Abilities</Text>
-          {pokemon.abilities.map((abilityInfo, index) => (
-            <Text key={index}>
-              {abilityInfo.ability.name.charAt(0).toUpperCase() + abilityInfo.ability.name.slice(1)}
-            </Text>
-          ))}
-        </View>
-
+        <PokemonTabs pokemon={pokemon} />
 
       </ScrollView>
     </SafeAreaView>
@@ -120,7 +101,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     paddingVertical: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',  
   },
@@ -140,7 +121,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     paddingVertical: 20,
-    backgroundColor: '#fff',
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 16,
@@ -165,16 +145,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+    paddingHorizontal: 24,
   },
   typeBadge: {
-    backgroundColor: '#5631E8',
+    backgroundColor: '#0E094014',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 99,
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center',
   },
   typeText: {
-    color: '#fff',
+    color: '#0E0940',
     fontWeight: 'bold',
     textTransform: 'capitalize',
   },
+  typeCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 6,
+  marginRight: 8,
+},
+
 });

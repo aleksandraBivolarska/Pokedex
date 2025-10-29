@@ -2,7 +2,7 @@
 
 - [x] Working Expo Go project, should be able to scan the QR code and see the app running on any device.
 - [ ] PokeAPI is used to fetch Pokémon data https://pokeapi.co/
-  - [ ] List of Pokémon is loaded from the API.
+  - [x] List of Pokémon is loaded from the API.
   - [ ] Pokémon details (metadata, stats, evolution chain) are loaded from the API.
 - [ ] List of Pokémon is displayed in a FlatList.
   - [ ] Must be able to filter the list by name using the search bar.
