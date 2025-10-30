@@ -1,5 +1,4 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
-
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 export type ThemedTextProps = TextProps & {
@@ -37,24 +36,26 @@ const styles = StyleSheet.create({
   default: {
     fontSize: 16,
     lineHeight: 24,
+    fontFamily: 'Rubik-Regular', // use Rubik-Regular instead of system font
   },
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600',
+    fontFamily: 'Rubik-SemiBold', // replace fontWeight 600
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
     lineHeight: 32,
+    fontFamily: 'Rubik-Bold', // replace fontWeight bold
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Rubik-Bold',
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
+    fontFamily: 'Rubik-Regular',
     color: '#0a7ea4',
   },
 });

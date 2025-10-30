@@ -22,7 +22,7 @@ export default function Favorite({ pokemonId, pokemonName, imageUrl }: FavoriteP
       isCurrentlyFavorite: isFavorited || false,
     });
   };
-
+  
   return (
     <TouchableOpacity
       style={styles.favoriteButton}

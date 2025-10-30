@@ -4,7 +4,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PokemonTabs from '@/components/ui/pokemon-tabs';
-import { typeColors } from '../constants/pokemonColors';
+import  typeColors  from '../constants/pokemonColors';
+
 export default function PokemonDetailScreen() {
   const { name } = useLocalSearchParams();
   const { data: pokemon, isLoading, error } = usePokemonByName(name as string);
@@ -40,36 +41,30 @@ export default function PokemonDetailScreen() {
           <Text style={styles.pokemonId}>{pokemon.id.toString().padStart(3, '0')}</Text>
         </View>
 
+        <View style={styles.typesContainer}>
+          {pokemon.types.map((typeInfo, index) => {
+            const typeName = typeInfo.type.name;
+            const color = typeColors[typeName.toLowerCase()] || '#777';
 
-// ...
+            return (
+              <View key={index} style={styles.typeBadge}>
+                <View style={[styles.typeCircle, { backgroundColor: color }]} />
+                <Text style={styles.typeText}>
+                  {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
 
-<View style={styles.typesContainer}>
-  {pokemon.types.map((typeInfo, index) => {
-    const typeName = typeInfo.type.name;
-    const color = typeColors[typeName.toLowerCase()] || '#777';
-
-    return (
-      <View key={index} style={styles.typeBadge}>
-        <View style={[styles.typeCircle, { backgroundColor: color }]} />
-        <Text style={styles.typeText}>
-          {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
-        </Text>
-      </View>
-    );
-  })}
-</View>
-        
         <View style={styles.imageContainer}>
           <PokemonImage id={pokemon.id} size={200} />
         </View>
-        
         <PokemonTabs pokemon={pokemon} />
-
       </ScrollView>
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -88,6 +83,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#5631E8',
+    fontFamily: 'Rubik-Regular',
   },
   errorContainer: {
     flex: 1,
@@ -97,17 +93,18 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     color: '#666',
+    fontFamily: 'Rubik-Regular',
   },
   header: {
     alignItems: 'center',
     paddingVertical: 20,
     paddingHorizontal: 24,
     flexDirection: 'row',
-    justifyContent: 'space-between',  
+    justifyContent: 'space-between',
   },
   pokemonName: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontFamily: 'Rubik-Bold',
     color: '#0E0940',
     textTransform: 'capitalize',
   },
@@ -115,7 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#0E0940',
     opacity: 0.3,
-    fontWeight: '400',
+    fontFamily: 'Rubik-Regular',
     marginTop: 4,
   },
   imageContainer: {
@@ -128,6 +125,7 @@ const styles = StyleSheet.create({
   placeholderText: {
     fontSize: 16,
     color: '#999',
+    fontFamily: 'Rubik-Regular',
   },
   detailsContainer: {
     padding: 16,
@@ -137,7 +135,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Rubik-Bold',
     color: '#0E0940',
     marginBottom: 12,
   },
@@ -158,14 +156,13 @@ const styles = StyleSheet.create({
   },
   typeText: {
     color: '#0E0940',
-    fontWeight: 'bold',
+    fontFamily: 'Rubik-Bold',
     textTransform: 'capitalize',
   },
   typeCircle: {
-  width: 12,
-  height: 12,
-  borderRadius: 6,
-  marginRight: 8,
-},
-
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 8,
+  },
 });

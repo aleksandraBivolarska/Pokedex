@@ -42,12 +42,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
     color: "#0E0940",
     marginBottom: 4,
+    fontFamily: "Rubik-Bold", // changed from fontWeight bold
   },
   subtitle: {
     fontSize: 16,
     color: "#666",
+    fontFamily: "Rubik-Regular", // regular font for subtitle
   },
 });

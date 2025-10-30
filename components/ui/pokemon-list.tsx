@@ -1,14 +1,13 @@
-import React, { useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import React from "react";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View, } from "react-native";
 import { useRouter } from "expo-router";
 import PokemonCard from "./pokemon-card";
-import { FavoritePokemon } from "../../app/services/database";
 
 interface PokemonListProps {
-  data?: any[];              // Pokémon data (either from API or DB)
+  data?: any[];
   isLoading?: boolean;
   error?: Error | null;
-  type?: "all" | "favorites"; // Context of list
+  type?: "all" | "favorites";
 }
 
 export const PokemonList: React.FC<PokemonListProps> = ({
@@ -18,18 +17,10 @@ export const PokemonList: React.FC<PokemonListProps> = ({
   type = "all",
 }) => {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
 
   const handlePokemonPress = (pokemonName: string) => {
     router.push(`/pokemon/${pokemonName}`);
   };
-
-  const filteredList = useMemo(() => {
-    if (!data) return [];
-    return data.filter((pokemon: any) =>
-      pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [data, searchQuery]);
 
   if (isLoading) {
     return (
@@ -48,8 +39,7 @@ export const PokemonList: React.FC<PokemonListProps> = ({
     );
   }
 
-  // 🧠 Empty state
-  if (filteredList.length === 0) {
+  if (!data || data.length === 0) {
     return (
       <View style={styles.centerContainer}>
         <Text style={styles.emptyText}>
@@ -63,27 +53,14 @@ export const PokemonList: React.FC<PokemonListProps> = ({
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder={
-            type === "favorites" ? "Search favorites..." : "Search Pokémon..."
-          }
-          placeholderTextColor="#999"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-
       <FlatList
-        data={filteredList}
+        data={data}
         keyExtractor={(item) => item.name}
         numColumns={2}
         columnWrapperStyle={styles.columnWrapper}
         contentContainerStyle={styles.cardsContainer}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
-          // Handle API vs Favorites source
           const id =
             type === "favorites"
               ? item.id
@@ -127,20 +104,5 @@ const styles = StyleSheet.create({
   columnWrapper: {
     justifyContent: "space-between",
     marginBottom: 12,
-  },
-  searchContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#f0f8ff",
-  },
-  searchInput: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    fontSize: 16,
-    color: "#0E0940",
-    borderWidth: 1,
-    borderColor: "#ddd",
   },
 });

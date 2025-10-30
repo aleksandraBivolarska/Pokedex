@@ -1,4 +1,4 @@
-export const typeColors: Record<string, string> = {
+const typeColors: Record<string, string> = {
   normal: '#A8A77A',
   fire: '#EE8130',
   water: '#6390F0',
@@ -18,3 +18,5 @@ export const typeColors: Record<string, string> = {
   steel: '#B7B7CE',
   fairy: '#D685AD',
 };
+
+export default typeColors;

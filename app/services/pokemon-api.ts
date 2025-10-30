@@ -1,8 +1,8 @@
-import { PokemonClient } from 'pokenode-ts';
+import { PokemonClient, EvolutionClient } from 'pokenode-ts';
 
-// Create a singleton instance of the Pokemon client
-// export const PokeApiService = new PokemonClient(); 
+// Create singletons
 const PokeApiService = new PokemonClient();
+const EvolutionApiService = new EvolutionClient();
 
-// Export the service for use in hooks
-export { PokeApiService };
+export { PokeApiService, EvolutionApiService };
+export default PokeApiService;
