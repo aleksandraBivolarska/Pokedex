@@ -28,10 +28,8 @@ export default function RootLayout() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
-    // Initialize database when app starts
     databaseService.initDatabase().catch(console.error);
 
-    // Load Rubik fonts
     async function loadFonts() {
       await Font.loadAsync({
         'Rubik-Black': require('../assets/fonts/Rubik-Black.ttf'),
@@ -69,7 +67,8 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="pokemon/[name]" options={{ title: 'Pokemon Details' }} />
+          <Stack.Screen name="pokemon/[name]" options={{ title: 'Back' }} />
+          
         </Stack>
       </SafeAreaProvider>
     </QueryClientProvider>

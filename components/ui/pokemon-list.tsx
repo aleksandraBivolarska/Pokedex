@@ -1,5 +1,11 @@
 import React from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View, } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import PokemonCard from "./pokemon-card";
 
@@ -51,39 +57,47 @@ export const PokemonList: React.FC<PokemonListProps> = ({
     );
   }
 
+  const groupedData = [];
+  for (let i = 0; i < data.length; i += 2) {
+    groupedData.push(data.slice(i, i + 2));
+  }
+
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.name}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
-        contentContainerStyle={styles.cardsContainer}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => {
-          const id =
-            type === "favorites"
-              ? item.id
-              : parseInt(item.url.match(/\/pokemon\/(\d+)\//)?.[1] || "0", 10);
+    <FlatList
+      data={groupedData}
+      keyExtractor={(_, index) => index.toString()}
+      contentContainerStyle={styles.cardsContainer}
+      showsVerticalScrollIndicator={false}
+      renderItem={({ item }) => (
+        <View style={styles.row}>
+          {item.map((pokemon: any, index: number) => {
+            const id =
+              type === "favorites"
+                ? pokemon.id
+                : parseInt(pokemon.url.match(/\/pokemon\/(\d+)\//)?.[1] || "0", 10);
 
-          const imageUrl =
-            item.imageUrl ||
-            item.image_url ||
-            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+            const imageUrl =
+              pokemon.imageUrl ||
+              pokemon.image_url ||
+              `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 
-          return (
-            <PokemonCard
-              pokemon={{
-                id,
-                name: item.name,
-                imageUrl,
-              }}
-              onPress={() => handlePokemonPress(item.name)}
-            />
-          );
-        }}
-      />
-    </View>
+            return (
+              <View key={pokemon.name} style={styles.cardWrapper}>
+                <PokemonCard
+                  pokemon={{
+                    id,
+                    name: pokemon.name,
+                    imageUrl,
+                  }}
+                  onPress={() => handlePokemonPress(pokemon.name)}
+                />
+              </View>
+            );
+          })}
+          {item.length === 1 && <View style={styles.cardWrapper} />} 
+        </View>
+      )}
+    />
   );
 };
 
@@ -101,8 +115,13 @@ const styles = StyleSheet.create({
   cardsContainer: {
     paddingBottom: 20,
   },
-  columnWrapper: {
+  row: {
+    flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 12,
+  },
+  cardWrapper: {
+    flex: 1,
+    marginHorizontal: 4,
   },
 });

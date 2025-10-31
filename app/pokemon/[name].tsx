@@ -1,14 +1,56 @@
-import { usePokemonByName } from '@/hooks/use-pokemon';
 import { PokemonImage } from '@/components/ui/pokemon-image';
-import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import PokemonTabs from '@/components/ui/pokemon-tabs';
-import  typeColors  from '../constants/pokemonColors';
+import { usePokemonByName } from '@/hooks/use-pokemon';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useIsFavorite, useToggleFavorite } from '../../hooks/use-favorite';
+import { useLayoutEffect } from 'react';
+import typeColors from '../constants/pokemonColors';
 
 export default function PokemonDetailScreen() {
   const { name } = useLocalSearchParams();
+  const navigation = useNavigation();
+
   const { data: pokemon, isLoading, error } = usePokemonByName(name as string);
+  const { data: isFavorite, isLoading: isFavoriteLoading } = useIsFavorite(pokemon?.id || 0);
+  const toggleFavorite = useToggleFavorite();
+
+  useLayoutEffect(() => {
+    if (!pokemon) return;
+
+    navigation.setOptions({
+      title: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() =>
+            toggleFavorite.mutate({
+              pokemonId: pokemon.id,
+              name: pokemon.name,
+              imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`,
+              isCurrentlyFavorite: isFavorite || false,
+            })
+          }
+          disabled={toggleFavorite.isPending}
+          style={{ marginRight: 16 }}
+        >
+          <Ionicons
+            name={isFavorite ? 'heart' : 'heart-outline'}
+            size={24}
+            color={isFavorite ? '#FF6B6B' : '#666'}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, pokemon, isFavorite, toggleFavorite.isPending]);
 
   if (isLoading) {
     return (
@@ -65,6 +107,7 @@ export default function PokemonDetailScreen() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -121,23 +164,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 16,
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: '#999',
-    fontFamily: 'Rubik-Regular',
-  },
-  detailsContainer: {
-    padding: 16,
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    borderRadius: 12,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontFamily: 'Rubik-Bold',
-    color: '#0E0940',
-    marginBottom: 12,
   },
   typesContainer: {
     flexDirection: 'row',
