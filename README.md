@@ -4,14 +4,14 @@
 - [x] PokeAPI is used to fetch Pokémon data https://pokeapi.co/
   - [x] List of Pokémon is loaded from the API.
   - [x] Pokémon details (metadata, stats, evolution chain) are loaded from the API.
-- [ ] List of Pokémon is displayed in a FlatList.
+- [x] List of Pokémon is displayed in a FlatList.
   - [x] Must be able to filter the list by name using the search bar.
 - [x] Pokémon details are displayed in a ScrollView.
   - [x] Must be able to navigate to the Pokémon details page from the list.
-  - [ ] Must be able to favorite the Pokémon.
+  - [x] Must be able to favorite the Pokémon.
   - [x] Must display type(s) for the Pokémon and use a unique color for each type.
   - [x] Pokémon detail tabs should be swipeable left and right.
-- [ ] Favorites list is displayed in a FlatList.
+- [x] Favorites list is displayed in a FlatList.
   - [x] Must be able to navigate to the Pokémon details page from the favorites list.
   - [] Must be able to unfavorite the Pokémon.
   - [x] Empty state must be displayed when there are no favorites.
@@ -20,7 +20,7 @@
     - [x] Share.
     - [x] Open in detail view.
 - [ ] All async operations must include an loading and error state.
-    - [ ] Fetching Pokémon list.
+    - [] Fetching Pokémon list.
     - [ ] Fetching Pokémon details.
     - [ ] Fetching Pokémon evolution chain.
 
@@ -33,7 +33,7 @@
 - [x] Uses Separation of Concerns (determine a project structure that follows this principle).
 <!-- Well more or less, Not sure how well it is actually separated but as much as possible I gues -->
 - [x] Expo Font is used to implement [the font](./assets/fonts.zip). 
-<!-- I think?? But not sure if the font is actually implemented??? -->
+<!-- I think but not sure if I did everywhere might have missed some elements -->
 
 ### Optional items
 Each optional item is worth 1 extra point.

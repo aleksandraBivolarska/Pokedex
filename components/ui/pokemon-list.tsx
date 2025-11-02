@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import PokemonCard from "./pokemon-card";
 
@@ -31,8 +25,8 @@ export const PokemonList: React.FC<PokemonListProps> = ({
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" />
-        <Text>Loading Pokémon...</Text>
+        <ActivityIndicator size="large" color="#5631E8" />
+        <Text style={styles.loadingText}>Loading Pokémon...</Text>
       </View>
     );
   }
@@ -40,7 +34,7 @@ export const PokemonList: React.FC<PokemonListProps> = ({
   if (error) {
     return (
       <View style={styles.centerContainer}>
-        <Text>Error loading Pokémon: {error.message}</Text>
+        <Text style={styles.errorText}>Error loading Pokémon: {error.message}</Text>
       </View>
     );
   }
@@ -70,7 +64,7 @@ export const PokemonList: React.FC<PokemonListProps> = ({
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => (
         <View style={styles.row}>
-          {item.map((pokemon: any, index: number) => {
+          {item.map((pokemon: any) => {
             const id =
               type === "favorites"
                 ? pokemon.id
@@ -107,10 +101,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#5631E8",
+    fontFamily: "Rubik-Regular",
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#666",
+    fontFamily: "Rubik-Regular",
+    textAlign: "center",
+  },
   emptyText: {
     fontSize: 18,
-    fontWeight: "500",
     color: "#555",
+    fontFamily: "Rubik-Medium",
+    textAlign: "center",
   },
   cardsContainer: {
     paddingBottom: 20,

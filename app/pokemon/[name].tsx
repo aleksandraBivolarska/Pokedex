@@ -2,14 +2,7 @@ import { PokemonImage } from '@/components/ui/pokemon-image';
 import PokemonTabs from '@/components/ui/pokemon-tabs';
 import { usePokemonByName } from '@/hooks/use-pokemon';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useIsFavorite, useToggleFavorite } from '../../hooks/use-favorite';

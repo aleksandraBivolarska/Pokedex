@@ -17,7 +17,6 @@ export class Pokemon {
 
   constructor(name: string, url: string) {
     this.name = name;
-    // Extract numeric ID from the Pokémon’s URL
     this.id = parseInt(url.split("/").filter(Boolean).pop() || "0");
     this.imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${this.id}.png`;
   }
@@ -27,7 +26,7 @@ export const usePokemonByName = (name: string) => {
   return useQuery({
     queryKey: ['pokemon', name],
     queryFn: () => PokeApiService.getPokemonByName(name),
-    enabled: !!name, // Only run query if name is provided
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    enabled: !!name,
+    staleTime: 10 * 60 * 1000, 
   });
 };

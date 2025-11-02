@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { FlatList, Image, StyleSheet, View, useWindowDimensions, Text, TouchableOpacity } from 'react-native';
+import { FlatList, Image, StyleSheet, View, useWindowDimensions, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 interface PokemonImageProps {
   id: string | number;
@@ -22,6 +22,9 @@ export function PokemonImage({ id, size = 300 }: PokemonImageProps) {
     },
   ];
 
+  const [loadingStates, setLoadingStates] = useState(images.map(() => true));
+  const [errorStates, setErrorStates] = useState(images.map(() => false));
+
   const goToIndex = (index: number) => {
     setCurrentIndex(index);
     flatListRef.current?.scrollToIndex({ index, animated: true });
@@ -40,13 +43,30 @@ export function PokemonImage({ id, size = 300 }: PokemonImageProps) {
         snapToAlignment="center"
         snapToInterval={width}
         decelerationRate="fast"
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View style={{ width, justifyContent: 'center', alignItems: 'center' }}>
-            <Image
-              source={{ uri: item.uri }}
-              style={{ width: size, height: size }}
-              resizeMode="contain"
-            />
+            {loadingStates[index] && !errorStates[index] && (
+              <ActivityIndicator size="large" color="#5631E8" style={{ position: 'absolute', top: size / 2 }} />
+            )}
+            {errorStates[index] ? (
+              <Text style={styles.errorText}>Failed to load image</Text>
+            ) : (
+              <Image
+                source={{ uri: item.uri }}
+                style={{ width: size, height: size }}
+                resizeMode="contain"
+                onLoadEnd={() => {
+                  const newLoading = [...loadingStates];
+                  newLoading[index] = false;
+                  setLoadingStates(newLoading);
+                }}
+                onError={() => {
+                  const newError = [...errorStates];
+                  newError[index] = true;
+                  setErrorStates(newError);
+                }}
+              />
+            )}
             <Text style={styles.label}>{item.label}</Text>
           </View>
         )}
@@ -91,5 +111,11 @@ const styles = StyleSheet.create({
   },
   activeButton: {
     backgroundColor: '#5631E8',
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
 });

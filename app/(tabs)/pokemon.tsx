@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Text, View, StyleSheet, TextInput } from "react-native";
+import { Text, View, StyleSheet, TextInput, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePokemonList } from "../../hooks/use-pokemon";
 import { PokemonList } from "@/components/ui/pokemon-list";
@@ -14,6 +14,23 @@ export default function PokemonScreen() {
       pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [data, searchQuery]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.center}>
+        <ActivityIndicator size="large" color="#5631E8" />
+        <Text style={styles.loadingText}>Loading Pokémon...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.center}>
+        <Text style={styles.errorText}>Error loading Pokémon: {(error as Error).message}</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -49,6 +66,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f0f8ff",
     paddingHorizontal: 20,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#5631E8",
+    fontFamily: "Rubik-Regular",
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    fontFamily: "Rubik-Regular",
   },
   header: {
     paddingHorizontal: 16,

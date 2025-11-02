@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet, Modal, Alert, Share } from "react-native";
+import { View, Text, Pressable, StyleSheet, Modal, Alert, Share, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFavorite, useToggleFavorite } from "../../hooks/use-favorite";
@@ -22,8 +22,33 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
     pokemon.imageUrl ||
     `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 
-  const { data: isFavorite } = useIsFavorite(id);
+  const {
+    data: isFavorite,
+    isLoading,
+    error,
+  } = useIsFavorite(id);
   const toggleFavorite = useToggleFavorite();
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <View style={[styles.card, styles.center]}>
+        <ActivityIndicator size="large" color="#5631E8" />
+        <Text style={styles.loadingText}>Loading Pokémon...</Text>
+      </View>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <View style={[styles.card, styles.center]}>
+        <Text style={styles.errorText}>
+          Error loading Pokémon: {(error as Error).message}
+        </Text>
+      </View>
+    );
+  }
 
   const handleOpenPokemon = () => {
     setModalVisible(false);
@@ -40,12 +65,6 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
         isCurrentlyFavorite: !!isFavorite,
       },
       {
-        onSuccess: () => {
-          Alert.alert(
-            isFavorite ? "Removed from Favorites" : "Added to Favorites",
-            `${pokemon.name} has been ${isFavorite ? "removed" : "added"}!`
-          );
-        },
         onError: () => {
           Alert.alert("Error", "Could not update favorites.");
         },
@@ -57,7 +76,7 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
     try {
       setModalVisible(false);
       await Share.share({
-        message: `Check out this Pokémon: ${pokemon.name}!\n${imageUrl}`,
+        message: `Check out this Pokémon: ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}!\n${imageUrl}`,
         url: imageUrl,
         title: pokemon.name,
       });
@@ -162,6 +181,23 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     alignItems: "center",
+  },
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#5631E8",
+    fontFamily: "Rubik-Regular",
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#666",
+    fontFamily: "Rubik-Regular",
+    textAlign: "center",
   },
   cardBackground: {
     width: "100%",

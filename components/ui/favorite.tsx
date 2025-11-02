@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useIsFavorite, useToggleFavorite } from '../../hooks/use-favorite';
 
 interface FavoriteProps {
@@ -13,27 +13,38 @@ export default function Favorite({ pokemonId, pokemonName, imageUrl }: FavoriteP
   const toggleFavorite = useToggleFavorite();
 
   const handleToggle = () => {
-    if (isLoading) return;
+    if (isLoading || toggleFavorite.isPending) return;
 
-    toggleFavorite.mutate({
-      pokemonId,
-      name: pokemonName,
-      imageUrl,
-      isCurrentlyFavorite: isFavorited || false,
-    });
+    toggleFavorite.mutate(
+      {
+        pokemonId,
+        name: pokemonName,
+        imageUrl,
+        isCurrentlyFavorite: isFavorited || false,
+      },
+      {
+        onError: (err: any) => {
+          Alert.alert("Error", `Could not update favorites: ${err.message || err}`);
+        },
+      }
+    );
   };
-  
+
   return (
     <TouchableOpacity
       style={styles.favoriteButton}
       onPress={handleToggle}
-      disabled={toggleFavorite.isPending}
+      disabled={isLoading || toggleFavorite.isPending}
     >
-      <Ionicons
-        name={isFavorited ? "heart" : "heart-outline"}
-        size={24}
-        color={isFavorited ? "#FF6B6B" : "#666"}
-      />
+      {isLoading || toggleFavorite.isPending ? (
+        <ActivityIndicator size="small" color="#FF6B6B" />
+      ) : (
+        <Ionicons
+          name={isFavorited ? "heart" : "heart-outline"}
+          size={24}
+          color={isFavorited ? "#FF6B6B" : "#666"}
+        />
+      )}
     </TouchableOpacity>
   );
 }
@@ -43,5 +54,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
