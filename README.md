@@ -1,3 +1,4 @@
+This is the Pokedex Front-End assignment by Aleksandra Bivolarska (678906)
 
 #### App functionality
 - [x] Working Expo Go project, should be able to scan the QR code and see the app running on any device.
@@ -19,10 +20,10 @@
     - [x] Favorite.
     - [x] Share.
     - [x] Open in detail view.
-- [ ] All async operations must include an loading and error state.
-    - [] Fetching Pokémon list.
-    - [ ] Fetching Pokémon details.
-    - [ ] Fetching Pokémon evolution chain.
+- [x] All async operations must include an loading and error state.
+    - [x] Fetching Pokémon list.
+    - [x] Fetching Pokémon details.
+    - [x] Fetching Pokémon evolution chain.
 
 #### Project setup
 - [x] Tanstack Query for API calls.
@@ -33,7 +34,6 @@
 - [x] Uses Separation of Concerns (determine a project structure that follows this principle).
 <!-- Well more or less, Not sure how well it is actually separated but as much as possible I gues -->
 - [x] Expo Font is used to implement [the font](./assets/fonts.zip). 
-<!-- I think but not sure if I did everywhere might have missed some elements -->
 
 ### Optional items
 Each optional item is worth 1 extra point.
