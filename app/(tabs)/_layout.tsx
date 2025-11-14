@@ -1,7 +1,6 @@
 import { HapticTab } from '@/components/haptic-tab';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
 
 export default function TabLayout() {
   return (
@@ -14,7 +13,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="pokemon"
+        name="index"
         options={{
           title: 'Pokemon',
           tabBarIcon: ({ color, size }) => (

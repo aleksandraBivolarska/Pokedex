@@ -1,10 +1,8 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { databaseService } from './services/database';
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
