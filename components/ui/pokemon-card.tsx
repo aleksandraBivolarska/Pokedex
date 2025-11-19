@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFavorite, useToggleFavorite } from "../../hooks/use-favorite";
 import Favorite from "./favorite";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 interface PokemonCardProps {
   pokemon: {
@@ -17,6 +18,13 @@ interface PokemonCardProps {
 const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const id = typeof pokemon.id === "string" ? parseInt(pokemon.id) : pokemon.id;
+
+  const backgroundColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+  const placeholderColor = useThemeColor({}, 'placeholder');
+  const cardImageBackground = useThemeColor({}, 'cardImageBackground');
+  const idTextColor = useThemeColor({}, 'idText');
 
   const imageUrl =
     pokemon.imageUrl ||
@@ -32,9 +40,9 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
   // Handle loading state
   if (isLoading) {
     return (
-      <View style={[styles.card, styles.center]}>
-        <ActivityIndicator size="large" color="#5631E8" />
-        <Text style={styles.loadingText}>Loading Pokémon...</Text>
+      <View style={[styles.card, styles.center, { backgroundColor }]}>
+        <ActivityIndicator size="large" color={tintColor} />
+        <Text style={[styles.loadingText, { color: tintColor }]}>Loading Pokémon...</Text>
       </View>
     );
   }
@@ -42,8 +50,8 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
   // Handle error state
   if (error) {
     return (
-      <View style={[styles.card, styles.center]}>
-        <Text style={styles.errorText}>
+      <View style={[styles.card, styles.center, { backgroundColor }]}>
+        <Text style={[styles.errorText, { color: placeholderColor }]}>
           Error loading Pokémon: {(error as Error).message}
         </Text>
       </View>
@@ -73,23 +81,29 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
   };
 
   const handleShare = async () => {
-    try {
+  try {
+    const result = await Share.share({
+      message: `Check out this Pokémon: ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}!\n${imageUrl}`,
+      url: imageUrl,
+      title: pokemon.name,
+    });
+    
+    // Only hide the modal if the share was completed or dismissed
+    if (result.action === Share.sharedAction || result.action === Share.dismissedAction) {
       setModalVisible(false);
-      await Share.share({
-        message: `Check out this Pokémon: ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}!\n${imageUrl}`,
-        url: imageUrl,
-        title: pokemon.name,
-      });
-    } catch (error) {
-      Alert.alert("Error", "Could not share Pokémon.");
     }
-  };
+  } catch {
+    Alert.alert("Error", "Could not share Pokémon.");
+    setModalVisible(false); // Still hide modal on error
+  }
+};
+
 
   return (
-    <Pressable style={styles.card} onPress={onPress}>
-      <View style={styles.cardBackground}>
-        <View style={styles.idBadge}>
-          <Text style={styles.idText}>{id.toString().padStart(3, "0")}</Text>
+    <Pressable style={[styles.card, { backgroundColor }]} onPress={onPress}>
+      <View style={[styles.cardBackground, { backgroundColor: cardImageBackground }]}>
+        <View style={[styles.idBadge, { backgroundColor: tintColor }]}>
+          <Text style={[styles.idText, { color: idTextColor }]}>{id.toString().padStart(3, "0")}</Text>
         </View>
 
         <View style={styles.favoriteContainer}>
@@ -104,9 +118,9 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
       </View>
 
       <View style={styles.cardLabel}>
-        <Text style={styles.pokemonName}>{pokemon.name}</Text>
+        <Text style={[styles.pokemonName, { color: textColor }]}>{pokemon.name}</Text>
         <Pressable onPress={() => setModalVisible(true)}>
-          <Ionicons name="ellipsis-horizontal-outline" size={20} />
+          <Ionicons name="ellipsis-horizontal-outline" size={20} color={textColor} />
         </Pressable>
       </View>
 
@@ -121,25 +135,25 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
           onPress={() => setModalVisible(false)}
         >
           <View style={styles.bottomModalContainer}>
-            <View style={styles.modalCard}>
+            <View style={[styles.modalCard, { backgroundColor }]}>
               <Pressable style={styles.modalRow} onPress={handleOpenPokemon}>
                 <Ionicons
                   name="open-outline"
                   size={20}
-                  color="#007AFF"
+                  color={tintColor}
                   style={styles.modalIcon}
                 />
-                <Text style={styles.modalText}>Open Pokémon</Text>
+                <Text style={[styles.modalText, { color: textColor }]}>Open Pokémon</Text>
               </Pressable>
 
               <Pressable style={styles.modalRow} onPress={handleAddToFavorites}>
                 <Ionicons
                   name={isFavorite ? "heart" : "heart-outline"}
                   size={20}
-                  color="#007AFF"
+                  color={tintColor}
                   style={styles.modalIcon}
                 />
-                <Text style={styles.modalText}>
+                <Text style={[styles.modalText, { color: textColor }]}>
                   {isFavorite ? "Remove from favorites" : "Add to favorites"}
                 </Text>
               </Pressable>
@@ -148,16 +162,16 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onPress }) => {
                 <Ionicons
                   name="share-outline"
                   size={20}
-                  color="#007AFF"
+                  color={tintColor}
                   style={styles.modalIcon}
                 />
-                <Text style={styles.modalText}>Share</Text>
+                <Text style={[styles.modalText, { color: textColor }]}>Share</Text>
               </Pressable>
             </View>
 
-            <View style={styles.cancelCard}>
+            <View style={[styles.cancelCard, { backgroundColor }]}>
               <Pressable onPress={() => setModalVisible(false)}>
-                <Text style={styles.cancelText}>Cancel</Text>
+                <Text style={[styles.cancelText, { color: tintColor }]}>Cancel</Text>
               </Pressable>
             </View>
           </View>
@@ -174,7 +188,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 8,
     borderRadius: 8,
-    backgroundColor: "#fff",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -190,18 +203,15 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#5631E8",
     fontFamily: "Rubik-Regular",
   },
   errorText: {
     fontSize: 16,
-    color: "#666",
     fontFamily: "Rubik-Regular",
     textAlign: "center",
   },
   cardBackground: {
     width: "100%",
-    backgroundColor: "#F6F6FF",
     alignItems: "center",
     paddingVertical: 16,
     position: "relative",
@@ -215,7 +225,6 @@ const styles = StyleSheet.create({
   pokemonName: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0E0940",
     width: "100%",
     textTransform: "capitalize",
   },
@@ -233,7 +242,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   idBadge: {
-    backgroundColor: "#5631E8",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -243,7 +251,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   idText: {
-    color: "#fff",
     fontWeight: "700",
     fontSize: 12,
     fontFamily: "Rubik",
@@ -257,7 +264,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   modalCard: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     overflow: "hidden",
   },
@@ -274,10 +280,8 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 16,
-    color: "#0E0940",
   },
   cancelCard: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     marginTop: 8,
     paddingVertical: 14,
@@ -285,7 +289,6 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 17,
-    color: "#007AFF",
     fontWeight: "600",
   },
 });

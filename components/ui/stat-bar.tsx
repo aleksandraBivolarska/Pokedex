@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface StatBarProps {
   name: string;
@@ -9,18 +10,20 @@ interface StatBarProps {
 
 export function StatBar({ name, value, max = 255 }: StatBarProps) {
   const percentage = (value / max) * 100;
+  
+  const textColor = useThemeColor({}, 'text');
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Text style={styles.statName}>
+        <Text style={[styles.statName, { color: textColor }]}>
           {name
             .replace(/-/g, ' ')
             .split(' ')
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ')}
         </Text>
-        <Text style={styles.statValue}>{value}</Text>
+        <Text style={[styles.statValue, { color: textColor }]}>{value}</Text>
       </View>
       <View style={styles.barBackground}>
         <View style={[styles.barFill, { width: `${percentage}%` }]} />
@@ -40,12 +43,10 @@ const styles = StyleSheet.create({
   },
   statName: {
     fontSize: 14,
-    color: '#0E0940',
     fontFamily: 'Rubik-Medium',
   },
   statValue: {
     fontSize: 14,
-    color: '#333',
     fontFamily: 'Rubik-Regular',
   },
   barBackground: {

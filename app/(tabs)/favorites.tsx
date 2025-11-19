@@ -2,23 +2,29 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PokemonList } from "@/components/ui/pokemon-list";
 import { useFavorites } from '../../hooks/use-favorite';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function FavoritesScreen() {
   const { data: favorites, isLoading, error } = useFavorites();
+  
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+  const placeholderColor = useThemeColor({}, 'placeholder');
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.center}>
-        <ActivityIndicator size="large" color="#5631E8" />
-        <Text style={styles.loadingText}>Loading favorites...</Text>
+      <SafeAreaView style={[styles.center, { backgroundColor }]}>
+        <ActivityIndicator size="large" color={tintColor} />
+        <Text style={[styles.loadingText, { color: tintColor }]}>Loading favorites...</Text>
       </SafeAreaView>
     );
   }
 
   if (error) {
     return (
-      <SafeAreaView style={styles.center}>
-        <Text style={styles.errorText}>
+      <SafeAreaView style={[styles.center, { backgroundColor }]}>
+        <Text style={[styles.errorText, { color: placeholderColor }]}>
           Error loading favorites: {(error as Error).message}
         </Text>
       </SafeAreaView>
@@ -26,11 +32,11 @@ export default function FavoritesScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>My Favorites</Text>
+        <Text style={[styles.title, { color: textColor }]}>My Favorites</Text>
         {favorites?.length ? (
-          <Text style={styles.subtitle}>
+          <Text style={[styles.subtitle, { color: placeholderColor }]}>
             {favorites.length} Pokémon saved
           </Text>
         ) : null}
@@ -49,7 +55,6 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f8ff",
     paddingHorizontal: 20,
   },
   center: {
@@ -61,12 +66,10 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#5631E8",
     fontFamily: "Rubik-Regular",
   },
   errorText: {
     fontSize: 16,
-    color: "#666",
     textAlign: "center",
     fontFamily: "Rubik-Regular",
   },
@@ -76,13 +79,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    color: "#0E0940",
     marginBottom: 4,
     fontFamily: "Rubik-Bold",
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
     fontFamily: "Rubik-Regular",
   },
 });

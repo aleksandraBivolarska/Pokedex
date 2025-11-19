@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { FlatList, Image, StyleSheet, View, useWindowDimensions, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface PokemonImageProps {
   id: string | number;
@@ -10,6 +11,8 @@ export function PokemonImage({ id, size = 300 }: PokemonImageProps) {
   const { width } = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  
+  const textColor = useThemeColor({}, 'text');
 
   const images = [
     {
@@ -67,7 +70,7 @@ export function PokemonImage({ id, size = 300 }: PokemonImageProps) {
                 }}
               />
             )}
-            <Text style={styles.label}>{item.label}</Text>
+            <Text style={[styles.label, { color: textColor }]}>{item.label}</Text>
           </View>
         )}
         onMomentumScrollEnd={(event) => {
@@ -96,7 +99,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#0E0940',
   },
   buttonsContainer: {
     flexDirection: 'row',
